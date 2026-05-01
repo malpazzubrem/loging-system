@@ -1,7 +1,9 @@
 import sqlite3
+import bcrypt
 
 conn = sqlite3.connect("base.db")
 cursor = conn.cursor()
+
 new_user = True
 
 cursor.execute("""
@@ -24,7 +26,7 @@ def loging():
         if i[0] == username:
             print("put your password")
             password = input()
-            if i[1] == password:
+            if bcrypt.checkpw(password.encode(),i[1]): #checking password
                 new_user = False
                 print("welcome back")
                 break
@@ -34,11 +36,14 @@ def loging():
 
 loging()
 
+
 if new_user == True:
     print("create your password")
     password = input()
-    cursor.execute("INSERT INTO users (username,password) VALUES (?,?)",(username,password))
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode(),salt) #hashing password
+    cursor.execute("INSERT INTO users (username,password) VALUES (?,?)",(username,hashed_password)) #saving data in database
     print("your account was created")
     conn.commit()
-
+    
 conn.close()
