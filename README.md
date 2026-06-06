@@ -1,3 +1,9 @@
 # loging-system
-this is my third project its a simple loging system with sqllite3
-I've added hashing but I still dont really trust it
+There are 2 versions now
+1)Classic cli
+2)Flask
+
+To open Flask one you need
+-Flask
+-sqlalchemy
+-flask bcrypt
