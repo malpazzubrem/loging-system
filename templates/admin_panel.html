@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>admin panel</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles_admin.css') }}">
+    </head>
+
+    <body>
+        <p>Hello admin</p>
+        <p>User list</p>
+
+        <table>
+         <thead>
+            <th>Id</th>
+            <th>username</th>
+         </thead>
+         {% for data in profiles %}
+         <tbody>
+            <td>{{data.id}}</td>
+            <td>{{data.username}}</td>
+            <td><a href="/delete/{{data.id}}" type="button">Delete</a></td>
+            <td><a href="/edit/{{data.id}}" type="button">Edit</a></td>
+         </tbody>
+         {% endfor%}
+
+        <a href="/logout">
+            <button>log off</button>
+        </a>
+      </table>
+    </body>
+</html>

@@ -37,3 +37,6 @@ button{
     color: white;
     background-image: linear-gradient(to right,blue,violet);
 }
+.error{
+    color: red;
+}

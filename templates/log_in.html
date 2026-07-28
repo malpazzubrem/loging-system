@@ -11,9 +11,13 @@
         
         <form method="post">
             <input type="text" placeholder="username" name="username" class="username">
-            <input type="password" placeholder="password" name="password" class="username">
-            <button type="submit" value="submit">Log in</button>
+            <input type="password" placeholder="password" name="password" class="password">
+            <button type="submit" value="submit" id="submit">Log in</button>
         </form>
+        
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
 
     </body>
 </html>
