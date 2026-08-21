@@ -4,7 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_session import Session
 from getpass import getpass
 from flask import redirect
-
+import os
 
 #to do
 #session cookies
@@ -20,6 +20,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #configuring base
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem" #configuring session
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", os.urandom(32))
 
 db = SQLAlchemy(app)
 Session(app)
@@ -126,7 +127,7 @@ def signin():
 
 @app.route("/admin",methods=["GET","POST"])
 def admin_panel():
-    if not("user.id" in session):
+    if not session.get("is_admin"):
         return redirect("/")
     profiles = Profile.query.all()
     print("admin accesing page")
@@ -136,12 +137,12 @@ def admin_panel():
 @app.route("/logout")
 def loging_out():
     print("admin loging out")
-    session.pop("user.id",None)
+    session.clear()
     return redirect("/")
 
 @app.route("/delete/<int:id>")
 def delete(id):
-    if not("user.id" in session):
+    if not session.get("is_admin"):
         return redirect("/")
     data = db.session.get(Profile, id)
     db.session.delete(data)
@@ -150,7 +151,7 @@ def delete(id):
 
 @app.route("/edit/<int:id>",methods=["POST","GET"])
 def edit(id):
-    if not("user.id" in session):
+    if not session.get("is_admin"):
         return redirect("/")
     data = db.session.get(Profile,id)
     if request.method=="POST":
