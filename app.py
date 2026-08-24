@@ -5,7 +5,7 @@ from flask_session import Session
 from getpass import getpass
 from flask import redirect
 import os
-
+global user
 #to do
 #session cookies
 #privalages
@@ -51,7 +51,7 @@ def create_admin():
 @app.cli.command("delete-admin")
 def delete_admin():
     username = input("write admin username: ")
-    data = data = Profile.query.filter_by(username=username).first()
+    data = Profile.query.filter_by(username=username).first()
     if data==None:
         print("no admin found")
         return
@@ -94,14 +94,15 @@ def login():
             user_1 = bcrypt.check_password_hash(user.password, password) #checking passwords
 
             if user_1 and user.is_admin:
-                session["user.id"] = user.id
+                session["user_id"] = user.id
                 session["is_admin"] = user.is_admin
                 print("admin login")
                 return redirect('/admin')
 
             elif user_1:
                 print('login successful')
-                return render_template("welcome_ou.html")
+                session["user_id"] = user.id
+                return redirect(f"/user/{user.id}")
             
             else:
                 print('wrong password')
@@ -121,7 +122,8 @@ def signin():
             p = Profile(username=username, password=hashed) #saving in sql
             db.session.add(p)
             db.session.commit()
-            return render_template("welcome_nu.html")
+            user = Profile.query.filter_by(username=username).first()
+            return redirect(f"/user/{user.id}")
 
     return render_template("sign_in.html")
 
@@ -136,7 +138,7 @@ def admin_panel():
 
 @app.route("/logout")
 def loging_out():
-    print("admin loging out")
+    print("admin/user loging out")
     session.clear()
     return redirect("/")
 
@@ -169,6 +171,13 @@ def edit(id):
         return redirect("/admin")
 
     return render_template("editing_user.html")
+
+@app.route("/user/<int:id>")
+def user_profile(id):
+    user=Profile.query.filter_by(id=id).first()
+    if not session.get("user_id")==user.id:
+        return redirect("/")
+    return render_template("user_profile.html",user=user)
 
 if __name__ == "__main__":
     with app.app_context(): 
